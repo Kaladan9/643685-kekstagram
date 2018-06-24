@@ -266,10 +266,10 @@ function addEffect(evt) {
 }
 
 function getMultiplierAtPinPosition() {
-  var pinOffset = sliderPinElement.offsetLeft;
+  var pinOffset = Math.round(sliderPinElement.offsetLeft * 100) / 100;
   var lineWidth = lineElement.getBoundingClientRect().width;
 
-  return pinOffset / lineWidth;
+  return Math.round((pinOffset / lineWidth) * 100) / 100;
 }
 
 function setSaturation() {
@@ -318,7 +318,7 @@ function setScale(evt, scaleOption) {
       break;
   }
 
-  if ((scaleOption.MIN <= currentScaleValue) && (currentScaleValue <= scaleOption.MAX)) {
+  if ((currentScaleValue >= scaleOption.MIN) && (currentScaleValue <= scaleOption.MAX)) {
     imgUploadPreviewElement.style.transform = 'scale(' + currentScaleValue / 100 + ')';
     resizeControlValueElement.value = currentScaleValue + '%';
   }
