@@ -210,6 +210,7 @@ var resizeControlPlusElement = imgUploadContainerElement.querySelector('.resize_
 function closeImgUploadContainer() {
   imgUploadContainerElement.classList.add('hidden');
   imgUploadInputElement.value = '';
+  imgUploadPreviewElement.style.transform = 'scale(1)';
   document.removeEventListener('keydown', onUploadEscPress);
 }
 
