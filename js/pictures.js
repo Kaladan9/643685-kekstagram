@@ -311,10 +311,10 @@ function setScale(evt, scaleOption) {
 
   switch (scaleChange) {
     case scaleOption.DEC:
-      currentScaleValue = currentScaleValue - (scaleOption.STEP * 100);
+      currentScaleValue -= scaleOption.STEP * 100;
       break;
     case scaleOption.INC:
-      currentScaleValue = currentScaleValue + (scaleOption.STEP * 100);
+      currentScaleValue += scaleOption.STEP * 100;
       break;
   }
 
@@ -345,94 +345,79 @@ resizeControlPlusElement.addEventListener('click', function (evt) {
 var hashtagsInputElement = imgUploadContainerElement.querySelector('.text__hashtags');
 var descrInputElement = imgUploadContainerElement.querySelector('.text__description');
 
-function isEmptyHashtag(value) {
-  return value === '';
+function isEmptyHashtag(hashtags) {
+  return hashtags.length === 0;
 }
 
-function isHashtagInInput(value) {
-  var valueArr = value.split(' ');
-
-  return valueArr.every(function (item, arr) {
-    return (item.charAt(0) === '#' || arr.length === 0);
+function isHashtagInInput(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag[0] === '#';
   });
 }
 
-function isHasOnlyHash(value) {
-  var valueArr = value.split(' ');
-
-  return valueArr.every(function (item, arr) {
-    return ((item.charAt(0) === '#' && item.length >= 2) || arr.length === 0);
+function isHasOnlyHash(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag[0] === '#' && hashtag.length <= 2;
   });
 }
 
-function isHastagsSeparating(value) {
-  var valueArr = value.split(' ');
-
-  return valueArr.every(function (item) {
-    return item.indexOf('#') === item.lastIndexOf('#');
+function isHastagsSeparating(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag.indexOf('#') === hashtag.lastIndexOf('#');
   });
 }
 
-function isDublicatesHashtags(value) {
-  var valueArr = value.split(' ');
+function isDublicatesHashtags(hashtags) {
+  var hashtagsInfo = hashtags.reduce(function (result, hashtag) {
+    result[hashtag] = !result.hasOwnProperty(hashtag);
 
-  for (var i = 0; i < valueArr.length - 1; i++) {
-    for (var j = i + 1; j < valueArr.length - 1; j++) {
-      if (valueArr[i].toLowerCase() === valueArr[j].toLowerCase()) {
+    return result;
+  }, {});
+
+  for (var key in hashtagsInfo) {
+    if (hashtagsInfo.hasOwnProperty(key)) {
+      if (!hashtagsInfo[key]) {
         return false;
       }
     }
   }
+
   return true;
 }
 
-function isValidHashtagsCount(value) {
-  var valueArr = value.split(' ');
-
-  return (valueArr.length <= 5);
+function isValidHashtagsCount(hashtags) {
+  return (hashtags.length <= 5);
 }
 
-function isLongHashtags(value) {
-  var valueArr = value.split(' ');
-
-  return valueArr.every(function (item) {
-    return item.length <= 20;
+function isLongHashtags(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag.length <= 20;
   });
 }
 
-function hashtagsInputCustomValidity() {
-  console.log(hashtagsInputElement.value);
-  if (isEmptyHashtag(hashtagsInputElement.value)) {
+function onInputChange() {
+  var value = hashtagsInputElement.value.trim();
+  var hashtags = value.split(' ').filter(function (hashtag) {
+    return hashtag !== '';
+  });
+
+  if (isEmptyHashtag(hashtags)) {
     hashtagsInputElement.setCustomValidity('');
-  } else if (!isHasOnlyHash(hashtagsInputElement.value)) {
+  } else if (isHasOnlyHash(hashtags)) {
     hashtagsInputElement.setCustomValidity('Хэш-тег не может состоять только из #');
-  } else if (!isHastagsSeparating(hashtagsInputElement.value)) {
+  } else if (!isHastagsSeparating(hashtags)) {
     hashtagsInputElement.setCustomValidity('Разделите хэш-теги пробелами');
-  } else if (!isDublicatesHashtags(hashtagsInputElement.value)) {
+  } else if (!isDublicatesHashtags(hashtags)) {
     hashtagsInputElement.setCustomValidity('Не повторяйте хэш-теги');
-  } else if (!isValidHashtagsCount(hashtagsInputElement.value)) {
+  } else if (!isValidHashtagsCount(hashtags)) {
     hashtagsInputElement.setCustomValidity('Нельзя задать больше 5 хэш-тегов');
-  } else if (!isLongHashtags(hashtagsInputElement.value)) {
+  } else if (!isLongHashtags(hashtags)) {
     hashtagsInputElement.setCustomValidity('Допустимая длина хэш-тега не более 20 символов');
-  } else if (!isHashtagInInput(hashtagsInputElement.value)) {
+  } else if (!isHashtagInInput(hashtags)) {
     hashtagsInputElement.setCustomValidity('Начинайте писать хэш-теги с #');
   } else {
     hashtagsInputElement.setCustomValidity('');
   }
 }
 
-function descrInputCustomValidity() {
-  if (descrInputElement.validity.tooLong) {
-    descrInputElement.setCustomValidity('Допустимо описание до 140 символов');
-  } else {
-    descrInputElement.setCustomValidity('');
-  }
-}
-
-hashtagsInputElement.addEventListener('change', function () {
-  hashtagsInputCustomValidity();
-});
-
-descrInputElement.addEventListener('invalid', function () {
-  descrInputCustomValidity();
-});
+hashtagsInputElement.addEventListener('change', onInputChange);
