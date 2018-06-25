@@ -854,6 +854,10 @@ main {
   border-radius: 5px;
 }
 
+input:invalid {
+  border-color: red;
+}
+
 
 /* Кнопка отправки формы */
 
