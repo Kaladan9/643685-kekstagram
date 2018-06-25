@@ -35,12 +35,6 @@ var picturesContainerElement = document.querySelector('.pictures');
 var bigPictureElement = document.querySelector('.big-picture');
 var popupCloseElement = bigPictureElement.querySelector('.cancel');
 
-function onPopupEscPress(evt) {
-  if (evt.keyCode === KeyCodes.ESC) {
-    closePopup();
-  }
-}
-
 function closePopup() {
   bigPictureElement.classList.add('hidden');
   document.removeEventListener('keydown', onPopupEscPress);
@@ -80,14 +74,14 @@ function createPicturesList(pictureOption) {
 
 function createPictures(pictures) {
   var pictureTemplate = document.querySelector('#picture')
-    .content
-    .querySelector('.picture__link');
+    .content;
+
   var pictureElement = pictureTemplate.cloneNode(true);
   var commentsCount = pictures.comments.length;
   var likesCount = pictures.likes;
 
   pictureElement.querySelector('.picture__img').src = pictures.url;
-  pictureElement.querySelector('.picture__img').dataset.index = pictures.dataAttribute;
+  pictureElement.querySelector('.picture__link').dataset.index = pictures.dataAttribute;
   pictureElement.querySelector('.picture__stat--likes').textContent = likesCount;
   pictureElement.querySelector('.picture__stat--comments').textContent = commentsCount;
 
@@ -142,8 +136,13 @@ function showPictures(picturesList, picturesOption) {
 
 function renderPopup(picturesList, picturesOption, evt) {
   var currentElement = evt.target;
+  var smallPictureElements = picturesContainerElement.querySelectorAll('.picture__link');
+
+  while (currentElement.parentElement !== picturesContainerElement) {
+    currentElement = currentElement.parentElement;
+  }
+
   var index = +currentElement.dataset.index;
-  var smallPictureElements = picturesContainerElement.querySelectorAll('.picture__img');
 
   if (currentElement !== smallPictureElements[index]) {
     return;
@@ -166,15 +165,32 @@ function renderPopup(picturesList, picturesOption, evt) {
   document.addEventListener('keydown', onPopupEscPress);
 }
 
+function onPopupEscPress(evt) {
+  if (evt.keyCode === KeyCodes.ESC) {
+    closePopup();
+  }
+}
+
+function onImageEnterPress(evt) {
+  if (evt.keyCode === KeyCodes.ENTER) {
+    renderPopup(pictures, Pictures, evt);
+  }
+}
+
 showPictures(pictures, Pictures);
 
 picturesContainerElement.addEventListener('click', function (evt) {
   renderPopup(pictures, Pictures, evt);
 });
 
+picturesContainerElement.addEventListener('keydown', function (evt) {
+  onImageEnterPress(evt);
+});
+
 popupCloseElement.addEventListener('click', function () {
   closePopup();
 });
+
 
 // --------------------------------------------------------------- //
 
