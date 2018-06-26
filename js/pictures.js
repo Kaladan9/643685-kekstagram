@@ -35,12 +35,6 @@ var picturesContainerElement = document.querySelector('.pictures');
 var bigPictureElement = document.querySelector('.big-picture');
 var popupCloseElement = bigPictureElement.querySelector('.cancel');
 
-function onPopupEscPress(evt) {
-  if (evt.keyCode === KeyCodes.ESC) {
-    closePopup();
-  }
-}
-
 function closePopup() {
   bigPictureElement.classList.add('hidden');
   document.removeEventListener('keydown', onPopupEscPress);
@@ -80,14 +74,14 @@ function createPicturesList(pictureOption) {
 
 function createPictures(pictures) {
   var pictureTemplate = document.querySelector('#picture')
-    .content
-    .querySelector('.picture__link');
+    .content;
+
   var pictureElement = pictureTemplate.cloneNode(true);
   var commentsCount = pictures.comments.length;
   var likesCount = pictures.likes;
 
   pictureElement.querySelector('.picture__img').src = pictures.url;
-  pictureElement.querySelector('.picture__img').dataset.index = pictures.dataAttribute;
+  pictureElement.querySelector('.picture__link').dataset.index = pictures.dataAttribute;
   pictureElement.querySelector('.picture__stat--likes').textContent = likesCount;
   pictureElement.querySelector('.picture__stat--comments').textContent = commentsCount;
 
@@ -142,8 +136,13 @@ function showPictures(picturesList, picturesOption) {
 
 function renderPopup(picturesList, picturesOption, evt) {
   var currentElement = evt.target;
+  var smallPictureElements = picturesContainerElement.querySelectorAll('.picture__link');
+
+  while (currentElement.parentElement !== picturesContainerElement) {
+    currentElement = currentElement.parentElement;
+  }
+
   var index = +currentElement.dataset.index;
-  var smallPictureElements = picturesContainerElement.querySelectorAll('.picture__img');
 
   if (currentElement !== smallPictureElements[index]) {
     return;
@@ -166,15 +165,32 @@ function renderPopup(picturesList, picturesOption, evt) {
   document.addEventListener('keydown', onPopupEscPress);
 }
 
+function onPopupEscPress(evt) {
+  if (evt.keyCode === KeyCodes.ESC) {
+    closePopup();
+  }
+}
+
+function onImageEnterPress(evt) {
+  if (evt.keyCode === KeyCodes.ENTER) {
+    renderPopup(pictures, Pictures, evt);
+  }
+}
+
 showPictures(pictures, Pictures);
 
 picturesContainerElement.addEventListener('click', function (evt) {
   renderPopup(pictures, Pictures, evt);
 });
 
+picturesContainerElement.addEventListener('keydown', function (evt) {
+  onImageEnterPress(evt);
+});
+
 popupCloseElement.addEventListener('click', function () {
   closePopup();
 });
+
 
 // --------------------------------------------------------------- //
 
@@ -215,7 +231,7 @@ function closeImgUploadContainer() {
 }
 
 function onUploadEscPress(evt) {
-  if (evt.keyCode === KeyCodes.ESC) {
+  if (evt.keyCode === KeyCodes.ESC && evt.target !== hashtagsInputElement && evt.target !== descrInputElement) {
     closeImgUploadContainer();
   }
 }
@@ -311,10 +327,10 @@ function setScale(evt, scaleOption) {
 
   switch (scaleChange) {
     case scaleOption.DEC:
-      currentScaleValue = currentScaleValue - (scaleOption.STEP * 100);
+      currentScaleValue -= scaleOption.STEP * 100;
       break;
     case scaleOption.INC:
-      currentScaleValue = currentScaleValue + (scaleOption.STEP * 100);
+      currentScaleValue += scaleOption.STEP * 100;
       break;
   }
 
@@ -339,3 +355,85 @@ resizeControlMinusElement.addEventListener('click', function (evt) {
 resizeControlPlusElement.addEventListener('click', function (evt) {
   setScale(evt, Scale);
 });
+
+// ------------------------------------------------------------- //
+
+var hashtagsInputElement = imgUploadContainerElement.querySelector('.text__hashtags');
+var descrInputElement = imgUploadContainerElement.querySelector('.text__description');
+
+function isEmptyHashtag(hashtags) {
+  return hashtags.length === 0;
+}
+
+function isHashtagInInput(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag[0] === '#';
+  });
+}
+
+function isHasOnlyHash(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag[0] === '#' && hashtag.length <= 2;
+  });
+}
+
+function isHastagsSeparating(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag.indexOf('#') === hashtag.lastIndexOf('#');
+  });
+}
+
+function isDublicatesHashtags(hashtags) {
+  var hashtagsInfo = hashtags.reduce(function (result, hashtag) {
+    result[hashtag] = !result.hasOwnProperty(hashtag);
+
+    return result;
+  }, {});
+
+  for (var key in hashtagsInfo) {
+    if (hashtagsInfo.hasOwnProperty(key)) {
+      if (!hashtagsInfo[key]) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+function isValidHashtagsCount(hashtags) {
+  return (hashtags.length <= 5);
+}
+
+function isLongHashtags(hashtags) {
+  return hashtags.every(function (hashtag) {
+    return hashtag.length <= 20;
+  });
+}
+
+function onInputChange() {
+  var value = hashtagsInputElement.value.trim();
+  var hashtags = value.split(' ').filter(function (hashtag) {
+    return hashtag !== '';
+  });
+
+  if (isEmptyHashtag(hashtags)) {
+    hashtagsInputElement.setCustomValidity('');
+  } else if (isHasOnlyHash(hashtags)) {
+    hashtagsInputElement.setCustomValidity('Хэш-тег не может состоять только из #');
+  } else if (!isHastagsSeparating(hashtags)) {
+    hashtagsInputElement.setCustomValidity('Разделите хэш-теги пробелами');
+  } else if (!isDublicatesHashtags(hashtags)) {
+    hashtagsInputElement.setCustomValidity('Не повторяйте хэш-теги');
+  } else if (!isValidHashtagsCount(hashtags)) {
+    hashtagsInputElement.setCustomValidity('Нельзя задать больше 5 хэш-тегов');
+  } else if (!isLongHashtags(hashtags)) {
+    hashtagsInputElement.setCustomValidity('Допустимая длина хэш-тега не более 20 символов');
+  } else if (!isHashtagInInput(hashtags)) {
+    hashtagsInputElement.setCustomValidity('Начинайте писать хэш-теги с #');
+  } else {
+    hashtagsInputElement.setCustomValidity('');
+  }
+}
+
+hashtagsInputElement.addEventListener('change', onInputChange);
