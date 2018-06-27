@@ -222,6 +222,7 @@ var lineElement = imgUploadContainerElement.querySelector('.scale__line');
 var resizeControlValueElement = imgUploadContainerElement.querySelector('.resize__control--value');
 var resizeControlMinusElement = imgUploadContainerElement.querySelector('.resize__control--minus');
 var resizeControlPlusElement = imgUploadContainerElement.querySelector('.resize__control--plus');
+var scaleLevelElement = imgUploadContainerElement.querySelector('.scale__level');
 
 function closeImgUploadContainer() {
   imgUploadContainerElement.classList.add('hidden');
@@ -254,6 +255,8 @@ function resetEffectSettings() {
   imgUploadPreviewElement.classList.add('img-upload__preview');
   imgUploadScaleElement.classList.add('hidden');
   imgUploadPreviewElement.style.filter = '';
+  scaleLevelElement.style.width = '100%';
+  sliderPinElement.style.left = '100%';
 }
 
 resetEffectSettings();
@@ -281,45 +284,6 @@ function addEffect(evt) {
   imgUploadPreviewElement.dataset.active = currentEffect;
 }
 
-function getMultiplierAtPinPosition() {
-  var pinOffset = Math.round(sliderPinElement.offsetLeft * 100) / 100;
-  var lineWidth = lineElement.getBoundingClientRect().width;
-
-  return Math.round((pinOffset / lineWidth) * 100) / 100;
-}
-
-function setSaturation() {
-  var filter = imgUploadPreviewElement.dataset.active;
-  var multiplier = getMultiplierAtPinPosition();
-  var imageFilter;
-
-  switch (filter) {
-    case Effects.NONE:
-      imageFilter = '';
-      break;
-    case Effects.CHROME:
-      imageFilter = 'grayscale(' + multiplier + ')';
-      break;
-    case Effects.SEPIA:
-      imageFilter = 'sepia(' + multiplier + ')';
-      break;
-    case Effects.MARVIN:
-      imageFilter = 'invert(' + multiplier * 100 + '%)';
-      break;
-    case Effects.PHOBOS:
-      imageFilter = 'blur(' + multiplier * 3 + 'px)';
-      break;
-    case Effects.HEAT:
-      imageFilter = 'brightness(' + (multiplier * 2 + 1) + ')';
-      break;
-    default:
-      imageFilter = '';
-      break;
-  }
-
-  imgUploadPreviewElement.style.filter = imageFilter;
-}
-
 function setScale(evt, scaleOption) {
   var currentElement = evt.target;
   var scaleChange = currentElement.dataset.scale;
@@ -342,10 +306,6 @@ function setScale(evt, scaleOption) {
 
 effectsListElement.addEventListener('click', function (evt) {
   addEffect(evt);
-});
-
-sliderPinElement.addEventListener('mouseup', function () {
-  setSaturation();
 });
 
 resizeControlMinusElement.addEventListener('click', function (evt) {
@@ -437,3 +397,95 @@ function onInputChange() {
 }
 
 hashtagsInputElement.addEventListener('change', onInputChange);
+
+// --------------------------------------------------------------------- //
+
+function getMultiplierAtPinPosition() {
+  var pinOffset = Math.round(sliderPinElement.offsetLeft * 100) / 100;
+  var lineWidth = lineElement.getBoundingClientRect().width;
+
+  return Math.round((pinOffset / lineWidth) * 100) / 100;
+}
+
+function setSaturation() {
+  var filter = imgUploadPreviewElement.dataset.active;
+  var multiplier = getMultiplierAtPinPosition();
+  var imageFilter;
+
+  switch (filter) {
+    case Effects.NONE:
+      imageFilter = '';
+      break;
+    case Effects.CHROME:
+      imageFilter = 'grayscale(' + multiplier + ')';
+      break;
+    case Effects.SEPIA:
+      imageFilter = 'sepia(' + multiplier + ')';
+      break;
+    case Effects.MARVIN:
+      imageFilter = 'invert(' + multiplier * 100 + '%)';
+      break;
+    case Effects.PHOBOS:
+      imageFilter = 'blur(' + multiplier * 3 + 'px)';
+      break;
+    case Effects.HEAT:
+      imageFilter = 'brightness(' + (multiplier * 2 + 1) + ')';
+      break;
+    default:
+      imageFilter = '';
+      break;
+  }
+
+  imgUploadPreviewElement.style.filter = imageFilter;
+}
+
+function getCoords(elem) {
+  var box = elem.getBoundingClientRect();
+
+  return {
+    top: box.top + pageYOffset,
+    left: box.left + pageXOffset
+  };
+
+}
+
+function onSliderPinMouseDown(evt) {
+  evt.preventDefault();
+
+  var pinCoords = getCoords(sliderPinElement);
+  var shiftX = evt.pageX - pinCoords.left;
+  var sliderCoords = getCoords(lineElement);
+
+  function onMouseMove(moveEvt) {
+    moveEvt.preventDefault();
+    var pinWidth = parseInt(getComputedStyle(sliderPinElement).width, 10);
+    var leftPosition = moveEvt.pageX - shiftX - sliderCoords.left + pinWidth / 2;
+
+    if (leftPosition < 0) {
+      leftPosition = 0;
+    }
+    var rightBorder = lineElement.offsetWidth;
+    if (leftPosition > rightBorder) {
+      leftPosition = rightBorder;
+    }
+
+    scaleLevelElement.style.width = leftPosition + 'px';
+
+    sliderPinElement.style.left = leftPosition + 'px';
+    setSaturation();
+  }
+
+  function onMouseUp(upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+
+    setSaturation();
+  }
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+}
+
+sliderPinElement.addEventListener('mousedown', onSliderPinMouseDown);
