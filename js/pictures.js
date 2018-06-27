@@ -455,22 +455,22 @@ function onSliderPinMouseDown(evt) {
   var pinCoords = getCoords(sliderPinElement);
   var shiftX = evt.pageX - pinCoords.left;
   var sliderCoords = getCoords(lineElement);
+  var rightBorder = lineElement.offsetWidth;
+  var pinWidth = parseInt(getComputedStyle(sliderPinElement).width, 10);
 
   function onMouseMove(moveEvt) {
     moveEvt.preventDefault();
-    var pinWidth = parseInt(getComputedStyle(sliderPinElement).width, 10);
     var leftPosition = moveEvt.pageX - shiftX - sliderCoords.left + pinWidth / 2;
 
     if (leftPosition < 0) {
       leftPosition = 0;
     }
-    var rightBorder = lineElement.offsetWidth;
+
     if (leftPosition > rightBorder) {
       leftPosition = rightBorder;
     }
 
     scaleLevelElement.style.width = leftPosition + 'px';
-
     sliderPinElement.style.left = leftPosition + 'px';
     setSaturation();
   }
@@ -488,4 +488,17 @@ function onSliderPinMouseDown(evt) {
   document.addEventListener('mouseup', onMouseUp);
 }
 
+function onLineElementClick(evt) {
+  evt.preventDefault();
+
+  var sliderCoords = getCoords(lineElement);
+  var leftPosition = evt.pageX - sliderCoords.left;
+
+  scaleLevelElement.style.width = leftPosition + 'px';
+  sliderPinElement.style.left = leftPosition + 'px';
+
+  setSaturation();
+}
+
 sliderPinElement.addEventListener('mousedown', onSliderPinMouseDown);
+lineElement.addEventListener('click', onLineElementClick);
