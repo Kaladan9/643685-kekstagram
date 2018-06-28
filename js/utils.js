@@ -43,12 +43,8 @@
       HEAT: 'heat'
     },
 
-    Scale: {
-      DEC: 'dec',
-      INC: 'inc',
-      STEP: 0.25,
-      MAX: 100,
-      MIN: 25
+    getRandomValue: function (min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
   };
 

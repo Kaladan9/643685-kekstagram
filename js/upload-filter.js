@@ -50,34 +50,36 @@
     imgUploadPreviewElement.style.filter = imageFilter;
   }
 
+  function setNewPinPosition(offset) {
+    scaleLevelElement.style.width = offset + 'px';
+    sliderPinElement.style.left = offset + 'px';
+    setSaturation();
+  }
+
   function getCoords(elem) {
     var box = elem.getBoundingClientRect();
 
     return {
       top: box.top + pageYOffset,
-      left: box.left + pageXOffset
+      left: box.left + pageXOffset,
+      width: box.width
     };
-
-  }
-
-  function setNewPinPosition(pinCoords) {
-    scaleLevelElement.style.width = pinCoords + 'px';
-    sliderPinElement.style.left = pinCoords + 'px';
-    setSaturation();
   }
 
   function onSliderPinMouseDown(evt) {
     evt.preventDefault();
 
-    var pinCoords = getCoords(sliderPinElement);
+    var pin = evt.target;
+    var pinContainer = evt.target.parentElement;
+
+    var pinCoords = getCoords(pin);
     var shiftX = evt.pageX - pinCoords.left;
-    var sliderCoords = getCoords(lineElement);
-    var rightBorder = lineElement.offsetWidth;
-    var pinWidth = parseInt(getComputedStyle(sliderPinElement).width, 10);
+    var sliderCoords = getCoords(pinContainer);
+    var rightBorder = pinContainer.offsetWidth;
 
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
-      var leftPosition = moveEvt.pageX - shiftX - sliderCoords.left + pinWidth / 2;
+      var leftPosition = moveEvt.pageX - shiftX - sliderCoords.left + pinCoords.width / 2;
 
       if (leftPosition < 0) {
         leftPosition = 0;
@@ -106,7 +108,7 @@
   function onLineElementClick(evt) {
     evt.preventDefault();
 
-    var sliderCoords = getCoords(lineElement);
+    var sliderCoords = getCoords(pinContainer);
     var leftPosition = evt.pageX - sliderCoords.left;
 
     setNewPinPosition(leftPosition);

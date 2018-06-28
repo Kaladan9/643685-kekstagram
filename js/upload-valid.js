@@ -10,8 +10,8 @@
   }
 
   function isHashtagInInput(hashtags) {
-    return hashtags.every(function (hashtag) {
-      return hashtag[0] === '#';
+    return hashtags.some(function (hashtag) {
+      return hashtag[0] !== '#';
     });
   }
 
@@ -23,35 +23,31 @@
 
   function isHastagsSeparating(hashtags) {
     return hashtags.every(function (hashtag) {
-      return hashtag.indexOf('#') === hashtag.lastIndexOf('#');
+      return hashtag.indexOf('#') !== hashtag.lastIndexOf('#');
     });
   }
 
   function isDublicatesHashtags(hashtags) {
-    var hashtagsInfo = hashtags.reduce(function (result, hashtag) {
-      result[hashtag] = !result.hasOwnProperty(hashtag);
+    var hashtagsInfo = {};
 
-      return result;
-    }, {});
-
-    for (var key in hashtagsInfo) {
-      if (hashtagsInfo.hasOwnProperty(key)) {
-        if (!hashtagsInfo[key]) {
-          return false;
-        }
+    for (var i = 0; i < hashtags.length; i++) {
+      if (hashtagsInfo[hashtags[i]]) {
+        return true;
       }
+
+      hashtagsInfo[hashtags[i]] = true;
     }
 
-    return true;
+    return false;
   }
 
   function isValidHashtagsCount(hashtags) {
-    return (hashtags.length <= 5);
+    return (hashtags.length > 5);
   }
 
   function isLongHashtags(hashtags) {
     return hashtags.every(function (hashtag) {
-      return hashtag.length <= 20;
+      return hashtag.length > 20;
     });
   }
 
@@ -65,15 +61,15 @@
       hashtagsInputElement.setCustomValidity('');
     } else if (isHasOnlyHash(hashtags)) {
       hashtagsInputElement.setCustomValidity('Хэш-тег не может состоять только из #');
-    } else if (!isHastagsSeparating(hashtags)) {
+    } else if (isHastagsSeparating(hashtags)) {
       hashtagsInputElement.setCustomValidity('Разделите хэш-теги пробелами');
-    } else if (!isDublicatesHashtags(hashtags)) {
+    } else if (isDublicatesHashtags(hashtags)) {
       hashtagsInputElement.setCustomValidity('Не повторяйте хэш-теги');
-    } else if (!isValidHashtagsCount(hashtags)) {
+    } else if (isValidHashtagsCount(hashtags)) {
       hashtagsInputElement.setCustomValidity('Нельзя задать больше 5 хэш-тегов');
-    } else if (!isLongHashtags(hashtags)) {
+    } else if (isLongHashtags(hashtags)) {
       hashtagsInputElement.setCustomValidity('Допустимая длина хэш-тега не более 20 символов');
-    } else if (!isHashtagInInput(hashtags)) {
+    } else if (isHashtagInInput(hashtags)) {
       hashtagsInputElement.setCustomValidity('Начинайте писать хэш-теги с #');
     } else {
       hashtagsInputElement.setCustomValidity('');

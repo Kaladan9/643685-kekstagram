@@ -1,10 +1,16 @@
 'use strict';
 
 (function () {
+  var Scale = {
+    DEC: 'dec',
+    INC: 'inc',
+    STEP: 0.25,
+    MAX: 100,
+    MIN: 25
+  };
 
   var KeyCodes = window.utils.KeyCodes;
   var Effects = window.utils.Effects;
-  var Scale = window.utils.Scale;
 
   var imgUploadInputElement = document.querySelector('#upload-file');
   var imgUploadContainerElement = document.querySelector('.img-upload__overlay');
@@ -20,55 +26,47 @@
   var hashtagsInputElement = imgUploadContainerElement.querySelector('.text__hashtags');
   var descrInputElement = imgUploadContainerElement.querySelector('.text__description');
 
-  function closeImgUploadContainer() {
-    imgUploadContainerElement.classList.add('hidden');
-    imgUploadInputElement.value = '';
-    imgUploadPreviewElement.style.transform = 'scale(1)';
-    document.removeEventListener('keydown', onEscPress);
-  }
-
-  function onEscPress(evt) {
-    if (evt.keyCode === KeyCodes.ESC && evt.target !== hashtagsInputElement && evt.target !== descrInputElement) {
-      closeImgUploadContainer();
-    }
-  }
-
-  function openImgUploadContainer() {
-    imgUploadContainerElement.classList.remove('hidden');
-    document.addEventListener('keydown', onEscPress);
-  }
-
-  imgUploadInputElement.addEventListener('change', function () {
-    openImgUploadContainer();
-  });
-
-  imgUploadCancelElement.addEventListener('click', function () {
-    closeImgUploadContainer();
-  });
-
-  function resetEffectSettings() {
-    imgUploadPreviewElement.classList = '';
+  function resetEffects() {
+    resizeControlValueElement.value = '100%';
+    imgUploadPreviewElement.className = '';
     imgUploadPreviewElement.classList.add('img-upload__preview');
     imgUploadScaleElement.classList.add('hidden');
+    imgUploadPreviewElement.style.transform = 'scale(1)';
     imgUploadPreviewElement.style.filter = '';
     scaleLevelElement.style.width = '100%';
     sliderPinElement.style.left = '100%';
   }
 
-  resetEffectSettings();
+  function onEscPress(evt) {
+    if (evt.keyCode === KeyCodes.ESC && evt.target !== hashtagsInputElement && evt.target !== descrInputElement) {
+      onCloseButtonClick();
+    }
+  }
 
-  function addEffect(evt) {
+  function onCloseButtonClick() {
+    imgUploadContainerElement.classList.add('hidden');
+    document.removeEventListener('keydown', onEscPress);
+    imgUploadInputElement.value = '';
+  }
+
+  function openImgUploadContainer() {
+    resetEffects();
+    imgUploadContainerElement.classList.remove('hidden');
+    document.addEventListener('keydown', onEscPress);
+  }
+
+  function onFilterClick(evt) {
     var currentElement = evt.target;
 
     if (currentElement === effectsListElement) {
       return;
     }
 
+    resetEffects();
+
     while (currentElement.parentElement !== effectsListElement) {
       currentElement = currentElement.parentElement;
     }
-
-    resetEffectSettings();
 
     var currentEffect = currentElement.dataset.effect;
 
@@ -100,9 +98,11 @@
     }
   }
 
-  effectsListElement.addEventListener('click', function (evt) {
-    addEffect(evt);
-  });
+  imgUploadInputElement.addEventListener('change', openImgUploadContainer);
+
+  imgUploadCancelElement.addEventListener('click', onCloseButtonClick);
+
+  effectsListElement.addEventListener('click', onFilterClick);
 
   resizeControlMinusElement.addEventListener('click', function (evt) {
     setScale(evt, Scale);
