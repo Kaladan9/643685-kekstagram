@@ -2,6 +2,10 @@
 
 (function () {
 
+  function showError() {
+    document.querySelector('.img-upload__message--error').classList.remove('hidden');
+  }
+
   window.utils = {
     Pictures: {
       COMMENTS: [
@@ -45,7 +49,10 @@
 
     getRandomValue: function (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    },
+
+
+    showError: showError
   };
 
 })();

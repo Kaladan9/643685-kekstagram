@@ -25,6 +25,7 @@
   var sliderPinElement = imgUploadContainerElement.querySelector('.scale__pin');
   var hashtagsInputElement = imgUploadContainerElement.querySelector('.text__hashtags');
   var descrInputElement = imgUploadContainerElement.querySelector('.text__description');
+  var userFormElement = document.querySelector('.img-upload__form');
 
   function resetEffects() {
     resizeControlValueElement.value = '100%';
@@ -53,6 +54,7 @@
     resetEffects();
     imgUploadContainerElement.classList.remove('hidden');
     document.addEventListener('keydown', onEscPress);
+    userFormElement.addEventListener('submit', submitForm);
   }
 
   function onFilterClick(evt) {
@@ -96,6 +98,11 @@
       imgUploadPreviewElement.style.transform = 'scale(' + currentScaleValue / 100 + ')';
       resizeControlValueElement.value = currentScaleValue + '%';
     }
+  }
+
+  function submitForm(evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(userFormElement), onCloseButtonClick, window.utils.showError);
   }
 
   imgUploadInputElement.addEventListener('change', openImgUploadContainer);
