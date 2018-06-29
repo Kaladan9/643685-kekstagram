@@ -108,7 +108,7 @@
   function onLineElementClick(evt) {
     evt.preventDefault();
 
-    var sliderCoords = getCoords(pinContainer);
+    var sliderCoords = getCoords(lineElement);
     var leftPosition = evt.pageX - sliderCoords.left;
 
     setNewPinPosition(leftPosition);

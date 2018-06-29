@@ -4,9 +4,9 @@
 
   var Pictures = window.utils.Pictures;
 
-  var pictureTemplate = document.querySelector('#picture').content;
-
   var getRandomValue = window.utils.getRandomValue;
+
+  var pictureTemplate = document.querySelector('#picture').content;
 
   function createComments(comments, minComments, maxComments) {
     var count = getRandomValue(minComments, maxComments);

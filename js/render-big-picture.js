@@ -2,14 +2,14 @@
 
 (function () {
   var picturesList = window.pictures;
-
   var Pictures = window.utils.Pictures;
   var KeyCodes = window.utils.KeyCodes;
+
+  var getRandomValue = window.utils.getRandomValue;
+
   var picturesContainerElement = document.querySelector('.pictures');
   var bigPictureElement = document.querySelector('.big-picture');
   var popupCloseElement = bigPictureElement.querySelector('.cancel');
-
-  var getRandomValue = window.utils.getRandomValue;
 
   function renderComments(count, comments, picturesOption) {
     var similarListElement = document.querySelector('.social__comments');
