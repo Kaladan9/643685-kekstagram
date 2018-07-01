@@ -3,6 +3,8 @@
 (function () {
 
   var Pictures = window.utils.Pictures;
+  var load = window.backend.load;
+  var showError = window.utils.showError;
 
   var pictureTemplate = document.querySelector('#picture').content;
 
@@ -48,9 +50,8 @@
   function onLoad(data) {
     window.pictures = data;
     showPictures(window.pictures, Pictures);
-    return window.pictures;
   }
 
-  window.backend.load(onLoad, window.utils.showError);
+  load(onLoad, showError);
 
 })();
