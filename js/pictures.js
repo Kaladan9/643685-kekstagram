@@ -4,7 +4,7 @@
 
   var Pictures = window.utils.Pictures;
   var load = window.backend.load;
-  var showError = window.utils.showError;
+  var showLoadError = window.utils.showLoadError;
 
   var pictureTemplate = document.querySelector('#picture').content;
 
@@ -52,6 +52,6 @@
     showPictures(window.pictures, Pictures);
   }
 
-  load(onLoad, showError);
+  load(onLoad, showLoadError);
 
 })();

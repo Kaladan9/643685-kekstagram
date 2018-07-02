@@ -12,7 +12,7 @@
   var KeyCodes = window.utils.KeyCodes;
   var Effects = window.utils.Effects;
   var save = window.backend.save;
-  var showError = window.utils.showError;
+  var showSendError = window.utils.showSendError;
 
   var imgUploadInputElement = document.querySelector('#upload-file');
   var imgUploadContainerElement = document.querySelector('.img-upload__overlay');
@@ -112,7 +112,7 @@
 
   function onSubmitForm(evt) {
     evt.preventDefault();
-    save(new FormData(userFormElement), closeImgUploadContainer, showError);
+    save(new FormData(userFormElement), closeImgUploadContainer, showSendError);
     submitButtonElement.disabled = 'disabled';
   }
 

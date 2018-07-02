@@ -490,6 +490,26 @@ main {
   margin-right: 30px;
 }
 
+.pictures__upload--error {
+  z-index: 200;
+  position: absolute;
+  height: 80px;
+  line-height: 10px;
+  background-color: red;
+  text-align: center;
+  margin: 0 auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-family: "Open Sans", "Arial", sans-serif;
+  font-size: 20px;
+}
+
+.pictures__upload--error:first-child {
+  margin-top: 10px;
+}
+
+
 
 /* Редактирование фотографии img-upload__overlay */
 
