@@ -173,6 +173,20 @@
     </div>
   </section>
 
+  <div class="img-upload__message img-upload__message--error error hidden">Ошибка загрузки файла
+    <div class="error__links">
+      <a class="error__link error__link--again" href="#">Попробовать снова</a>
+      <a class="error__link error__link--download" href="#">Загрузить другой файл</a>
+    </div>
+  </div>
+
+  <div class="pictures__upload--error hidden">
+    <div>
+      <p>Произошла ошибка загрузки</p>
+      <p>Попробуйте перезагрузить страницу</p>
+    </div>
+  </div>
+
 </main>
 
 <footer class="page-footer container">
@@ -215,16 +229,10 @@
   <div class="img-upload__message img-upload__message--loading hidden">Загружаем...</div>
 
   <div class="img-upload__message img-upload__message--processing hidden">Кексограмим...</div>
-
-  <div class="img-upload__message img-upload__message--error error hidden">Ошибка загрузки файла
-    <div class="error__links">
-      <a class="error__link" href="#">Попробовать снова</a>
-      <a class="error__link" href="#">Загрузить другой файл</a>
-    </div>
-  </div>
 </template>
 
 <script src="js/utils.js"></script>
+<script src="js/backend.js"></script>
 <script src="js/upload.js"></script>
 <script src="js/upload-filter.js"></script>
 <script src="js/upload-valid.js"></script>

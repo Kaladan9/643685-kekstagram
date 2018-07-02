@@ -2,6 +2,20 @@
 
 (function () {
 
+  function getRandomValue(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function showSendError() {
+    var messageErrorElement = document.querySelector('.img-upload__message--error');
+    messageErrorElement.classList.remove('hidden');
+    messageErrorElement.style.zIndex = '200';
+  }
+
+  function showLoadError() {
+    document.querySelector('.pictures__upload--error').classList.remove('hidden');
+  }
+
   window.utils = {
     Pictures: {
       COMMENTS: [
@@ -43,9 +57,9 @@
       HEAT: 'heat'
     },
 
-    getRandomValue: function (min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    getRandomValue: getRandomValue,
+    showSendError: showSendError,
+    showLoadError: showLoadError
   };
 
 })();

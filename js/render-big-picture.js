@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var picturesList = window.pictures;
+
   var Pictures = window.utils.Pictures;
   var KeyCodes = window.utils.KeyCodes;
 
@@ -85,12 +85,12 @@
 
   function onImageEnterPress(evt) {
     if (evt.keyCode === KeyCodes.ENTER) {
-      openPopup(picturesList, Pictures, evt);
+      openPopup(window.pictures, Pictures, evt);
     }
   }
 
   picturesContainerElement.addEventListener('click', function (evt) {
-    openPopup(picturesList, Pictures, evt);
+    openPopup(window.pictures, Pictures, evt);
   });
 
   picturesContainerElement.addEventListener('keydown', onImageEnterPress);
