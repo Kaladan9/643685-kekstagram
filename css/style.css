@@ -1053,6 +1053,7 @@ input:invalid {
 
   margin: 0;
   padding: 0;
+  padding-top: 10px;
 }
 
 .social__comment {
