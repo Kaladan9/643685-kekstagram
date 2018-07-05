@@ -49,7 +49,6 @@
     resizeControlValueElement.value = '100%';
     uploadPreviewElement.className = '';
     uploadPreviewElement.classList.add('img-upload__preview');
-    imgUploadPreviewElement.src = '';
     imgUploadScaleElement.classList.add('hidden');
     uploadPreviewElement.style.transform = 'scale(1)';
     uploadPreviewElement.style.filter = '';
@@ -71,29 +70,37 @@
       return fileName.endsWith(it);
     });
 
+    function onImgLoad() {
+      imgUploadPreviewElement.src = reader.result;
+      reader.removeEventListener('load', onImgLoad);
+    }
+
     if (matches) {
       var reader = new FileReader();
 
-      reader.addEventListener('load', function () {
-        imgUploadPreviewElement.src = reader.result;
-      });
+      reader.addEventListener('load', onImgLoad);
 
       reader.readAsDataURL(file);
+      return true;
     }
+
+    return false;
   }
 
   function openImgUploadContainer() {
-    resetEffects();
-    loadUserImage();
-    imgUploadContainerElement.classList.remove('hidden');
-    document.addEventListener('keydown', onEscPress);
-    userFormElement.addEventListener('submit', onSubmitForm);
+    if (loadUserImage()) {
+      resetEffects();
+      imgUploadContainerElement.classList.remove('hidden');
+      document.addEventListener('keydown', onEscPress);
+      userFormElement.addEventListener('submit', onSubmitForm);
+    }
   }
 
   function closeImgUploadContainer() {
     imgUploadContainerElement.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
     userFormElement.removeEventListener('submit', onSubmitForm);
+    imgUploadPreviewElement.src = '';
     imgUploadInputElement.value = '';
     hashtagsInputElement.value = '';
     descrInputElement.value = '';
@@ -113,6 +120,7 @@
       currentElement = currentElement.parentElement;
     }
 
+    currentElement.firstElementChild.checked = true;
     var currentEffect = currentElement.dataset.effect;
 
     if (currentEffect !== Effects.NONE) {
@@ -121,6 +129,12 @@
 
     uploadPreviewElement.classList.add('effects__preview--' + currentEffect);
     uploadPreviewElement.dataset.active = currentEffect;
+  }
+
+  function onFilterEnterPress(evt) {
+    if (evt.keyCode === KeyCodes.ENTER) {
+      onFilterClick(evt);
+    }
   }
 
   function setScale(evt, scaleOption) {
@@ -170,6 +184,7 @@
   });
 
   effectsListElement.addEventListener('click', onFilterClick);
+  effectsListElement.addEventListener('keydown', onFilterEnterPress);
 
   resizeControlMinusElement.addEventListener('click', function (evt) {
     setScale(evt, Scale);

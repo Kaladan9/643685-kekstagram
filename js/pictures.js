@@ -16,11 +16,9 @@
   var buttonFilterDiscussedElement = filtersElement.querySelector('#filter-discussed');
 
   function createPicturesId(arr) {
-    var idArr = [];
-    arr.map(function (element) {
-      idArr.push(parseInt(element.url.replace(/\D+/g, ''), 10));
+    return arr.map(function (element) {
+      return parseInt(element.url.replace(/\D+/g, ''), 10);
     });
-    return idArr;
   }
 
   function createPictureElement(pictures, idArr) {
@@ -62,21 +60,20 @@
     });
   }
 
-  function changeActiveElement(evtTarget) {
-    var currentButton = evtTarget;
+  function changeActiveElement(currentButton) {
     var previousButton = document.querySelector('.img-filters__button--active');
 
     previousButton.classList.remove('img-filters__button--active');
     currentButton.classList.add('img-filters__button--active');
   }
 
-  function filterPopularElement(evtTarget, pictures, picturesOption) {
-    changeActiveElement(evtTarget);
+  function filterPopularElement(currentButton, pictures, picturesOption) {
+    changeActiveElement(currentButton);
     removePreviousPictures();
     showPictures(pictures, picturesOption);
   }
 
-  function filterRandomPictures(evtTarget, pictures, picturesOption) {
+  function filterRandomPictures(currentButton, pictures, picturesOption) {
     var copyArr = pictures.slice();
     var newArr = [];
 
@@ -87,19 +84,19 @@
       copyArr.splice(randomElementIndex, 1);
     }
 
-    changeActiveElement(evtTarget);
+    changeActiveElement(currentButton);
     removePreviousPictures();
     showPictures(newArr, picturesOption);
   }
 
-  function filterDiscussedPictures(evtTarget, pictures, picturesOption) {
+  function filterDiscussedPictures(currentButton, pictures, picturesOption) {
     var copyArr = pictures.slice();
 
     copyArr.sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
 
-    changeActiveElement(evtTarget);
+    changeActiveElement(currentButton);
     removePreviousPictures();
     showPictures(copyArr, picturesOption);
   }

@@ -32,25 +32,25 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < comments.length; i++) {
-      var liElement = document.createElement('li');
-      liElement.className = 'social__comment';
+      var commentBlockElement = document.createElement('li');
+      commentBlockElement.className = 'social__comment';
 
-      var imgElement = document.createElement('img');
-      imgElement.className = 'social__picture';
-      imgElement.src = 'img/avatar-'
+      var userAvatarElement = document.createElement('img');
+      userAvatarElement.className = 'social__picture';
+      userAvatarElement.src = 'img/avatar-'
         + getRandomValue(picturesOption.MIN_AVATAR_NUM, picturesOption.MAX_AVATAR_NUM)
         + '.svg';
-      imgElement.alt = 'Аватар комментатора фотографии';
-      imgElement.width = '35';
-      imgElement.height = '35';
+      userAvatarElement.alt = 'Аватар комментатора фотографии';
+      userAvatarElement.width = '35';
+      userAvatarElement.height = '35';
 
-      var pElement = document.createElement('p');
-      pElement.className = 'social__text';
-      pElement.textContent = comments[i];
+      var commentTextElement = document.createElement('p');
+      commentTextElement.className = 'social__text';
+      commentTextElement.textContent = comments[i];
 
-      liElement.appendChild(imgElement);
-      liElement.appendChild(pElement);
-      fragment.appendChild(liElement);
+      commentBlockElement.appendChild(userAvatarElement);
+      commentBlockElement.appendChild(commentTextElement);
+      fragment.appendChild(commentBlockElement);
     }
 
     commentsElement.appendChild(fragment);
