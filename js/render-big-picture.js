@@ -31,7 +31,7 @@
   function renderComments(comments, picturesOption) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < comments.length; i++) {
+    comments.forEach(function (comment) {
       var commentBlockElement = document.createElement('li');
       commentBlockElement.className = 'social__comment';
 
@@ -46,12 +46,12 @@
 
       var commentTextElement = document.createElement('p');
       commentTextElement.className = 'social__text';
-      commentTextElement.textContent = comments[i];
+      commentTextElement.textContent = comment;
 
       commentBlockElement.appendChild(userAvatarElement);
       commentBlockElement.appendChild(commentTextElement);
       fragment.appendChild(commentBlockElement);
-    }
+    });
 
     commentsElement.appendChild(fragment);
   }
