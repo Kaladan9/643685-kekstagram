@@ -2,8 +2,6 @@
 
 (function () {
 
-  var Effects = window.utils.Effects;
-
   var imgUploadContainerElement = document.querySelector('.img-upload__overlay');
   var imgUploadPreviewElement = imgUploadContainerElement.querySelector('.img-upload__preview');
   var scaleLevelElement = imgUploadContainerElement.querySelector('.scale__level');
@@ -21,33 +19,17 @@
   function setSaturation() {
     var filter = imgUploadPreviewElement.dataset.active;
     var multiplier = getMultiplierAtPinPosition();
-    var imageFilter;
 
-    switch (filter) {
-      case Effects.NONE:
-        imageFilter = '';
-        break;
-      case Effects.CHROME:
-        imageFilter = 'grayscale(' + multiplier + ')';
-        break;
-      case Effects.SEPIA:
-        imageFilter = 'sepia(' + multiplier + ')';
-        break;
-      case Effects.MARVIN:
-        imageFilter = 'invert(' + multiplier * 100 + '%)';
-        break;
-      case Effects.PHOBOS:
-        imageFilter = 'blur(' + multiplier * 3 + 'px)';
-        break;
-      case Effects.HEAT:
-        imageFilter = 'brightness(' + (multiplier * 2 + 1) + ')';
-        break;
-      default:
-        imageFilter = '';
-        break;
-    }
+    var filterListMap = {
+      'none': '',
+      'chrome': 'grayscale(' + multiplier + ')',
+      'sepia': 'sepia(' + multiplier + ')',
+      'marvin': 'invert(' + multiplier * 100 + '%)',
+      'phobos': 'blur(' + multiplier * 3 + 'px)',
+      'heat': 'brightness(' + (multiplier * 2 + 1) + ')'
+    };
 
-    imgUploadPreviewElement.style.filter = imageFilter;
+    imgUploadPreviewElement.style.filter = filterListMap[filter] || '';
   }
 
   function setNewPinPosition(offset) {

@@ -48,15 +48,6 @@
       ENTER: 13
     },
 
-    Effects: {
-      NONE: 'none',
-      CHROME: 'chrome',
-      SEPIA: 'sepia',
-      MARVIN: 'marvin',
-      PHOBOS: 'phobos',
-      HEAT: 'heat'
-    },
-
     getRandomValue: getRandomValue,
     showSendError: showSendError,
     showLoadError: showLoadError
